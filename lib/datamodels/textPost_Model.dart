@@ -19,6 +19,7 @@ class TextPost {
     required this.commentCount,
     required this.shareCount,
   });
+
   TextPost.fromDatabase({
     required this.id,
     required this.username,
@@ -30,6 +31,7 @@ class TextPost {
     required this.commentCount,
     required this.shareCount,
   });
+
   // Factory constructor to create a TextPost from a map (e.g., JSON data)
   factory TextPost.fromJson(Map<String, dynamic> json) {
     return TextPost(

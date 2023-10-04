@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import '../constants/color_constants.dart';
 import '../constants/font_constants.dart';
 import '../constants/image_constants.dart';
+import '../constants/samplePosts_constants.dart';
 import '../datamodels/textPost_Model.dart';
 import '../providers/all_providers.dart';
 
@@ -18,42 +19,19 @@ class ViewChangeNotifier extends ChangeNotifier {
   List<Widget> pages = [Home(), Profile()];
   int selectedTabIndex = 0;
   List<String> alltabs = ["All Posts", "Following", "Close Friends", "Explore"];
-  bool postsuccesful=false;
+  bool postsuccesful = false;
 
-  void setshowPostSuccessTrue(){
-    postsuccesful=true;
-    Future.delayed(Duration(seconds: 4),setshowPostSuccessFalse);
+  void setshowPostSuccessTrue() {
+    postsuccesful = true;
+    Future.delayed(Duration(seconds: 4), setshowPostSuccessFalse);
     notifyListeners();
   }
 
-  void setshowPostSuccessFalse(){
-    postsuccesful=false;
+  void setshowPostSuccessFalse() {
+    postsuccesful = false;
     notifyListeners();
   }
-  List<TextPost> alltextposts = [
-    TextPost(
-        username: "simonhl",
-        userFullName: "Simon",
-        userAvatar: 6,
-        datetime: "October 1, 2023",
-        postText: "An extremely credible source has called my office and "
-            "told me that @BarackObama’s birth certificate is a"
-            "fraud.",
-        likeCount: 24,
-        commentCount: 3,
-        shareCount: 2),
-    TextPost(
-        username: "liambrookes",
-        userFullName: "Liam",
-        userAvatar: 4,
-        datetime: "September 30, 2023",
-        postText: "An extremely credible source has called my office and "
-            "told me that @BarackObama’s birth certificate is a "
-            "fraud.",
-        likeCount: 24,
-        commentCount: 3,
-        shareCount: 2),
-  ];
+
   TextEditingController newposttextController = TextEditingController();
   FocusNode newpostKeyboardFocusNode = FocusNode();
   bool isAddingNewPost = false;
@@ -105,67 +83,72 @@ class ViewChangeNotifier extends ChangeNotifier {
 
   void oncreatePostCancelled() {}
 
-  Widget newpostRow(BuildContext context,WidgetRef ref) {
-    return isAddingNewPost
-        ? newpost(context, ref)
-        : SizedBox(height: 0);
+  Widget newpostRow(BuildContext context, WidgetRef ref) {
+    return isAddingNewPost ? newpost(context, ref) : SizedBox(height: 0);
   }
-  Widget postAddedIndicator(BuildContext context){
+
+  Widget postAddedIndicator(BuildContext context) {
     double screenwidth = MediaQuery.sizeOf(context).width;
-    return
-      postsuccesful?
-      Container(
-      width: screenwidth * 0.934,
-      height: screenwidth*0.2,
-    //  margin: EdgeInsets.only(bottom: screenwidth*0.04),
-      padding: EdgeInsets.symmetric(horizontal: screenwidth*0.02,
-      vertical:screenwidth*0.02, ),
-      decoration: BoxDecoration(
-        color: appmainskyblue,
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(onTap: (){
-
-              }, child: Icon(CupertinoIcons.xmark_circle_fill,
-              color: Colors.white,
-                size: 18,
-              ))
-            ],
-
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(
-                CupertinoIcons.checkmark_alt_circle_fill,
-                color: Colors.white,
-                size: screenwidth * 0.048,
-              ),
-              Container(
-                margin: EdgeInsets.only(left: screenwidth * 0.017),
-                child: Text(
-                  "Post Added Succesfully",
-                  style: TextStyle(
-                    letterSpacing: -0.1,
-                    fontFamily: interregular,
-                    color: Colors.white,
-                    fontSize: screenwidth * 0.038,
-                  ),
+    return postsuccesful
+        ? Container(
+            width: screenwidth * 0.934,
+            height: screenwidth * 0.2,
+            //  margin: EdgeInsets.only(bottom: screenwidth*0.04),
+            padding: EdgeInsets.symmetric(
+              horizontal: screenwidth * 0.02,
+              vertical: screenwidth * 0.02,
+            ),
+            decoration: BoxDecoration(
+              color: appmainskyblue,
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          setshowPostSuccessFalse();
+                        },
+                        child: Icon(
+                          CupertinoIcons.xmark_circle_fill,
+                          color: Colors.white,
+                          size: 18,
+                        ))
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
-      )
-      ,
-    ):SizedBox(height: 0,);
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      CupertinoIcons.checkmark_alt_circle_fill,
+                      color: Colors.white,
+                      size: screenwidth * 0.048,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: screenwidth * 0.017),
+                      child: Text(
+                        "Post Added Succesfully",
+                        style: TextStyle(
+                          letterSpacing: -0.1,
+                          fontFamily: interregular,
+                          color: Colors.white,
+                          fontSize: screenwidth * 0.038,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
+        : SizedBox(
+            height: 0,
+          );
   }
+
   Widget pageTabs(BuildContext context) {
     double screenwidth = MediaQuery.sizeOf(context).width;
     return Container(
@@ -214,12 +197,53 @@ class ViewChangeNotifier extends ChangeNotifier {
     );
   }
 
-  Widget allpostlist(BuildContext context) {
-    double screenwidth = MediaQuery.sizeOf(context).width;
+  Widget getPostsBasedonTab(BuildContext context, WidgetRef ref) {
+    switch (selectedTabIndex) {
+      case 0:
+        return allpostlist(context, ref);
+      case 1:
+        return followingpostslist(context, ref);
+      case 2:
+        return closeFriendspostslist(context, ref);
+      case 3:
+        return explorePostslist(context, ref);
+      default:
+        return explorePostslist(context, ref);
+    }
+  }
+
+  Widget allpostlist(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         for (int i = 0; i < alltextposts.length; i++)
-          individualpost(context, alltextposts[i])
+          individualpost(context, ref, alltextposts[i])
+      ],
+    );
+  }
+
+  Widget followingpostslist(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        for (int i = 0; i < allfollowingposts.length; i++)
+          individualpost(context, ref, allfollowingposts[i])
+      ],
+    );
+  }
+
+  Widget closeFriendspostslist(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        for (int i = 0; i < allclosefriendsposts.length; i++)
+          individualpost(context, ref, allclosefriendsposts[i])
+      ],
+    );
+  }
+
+  Widget explorePostslist(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        for (int i = 0; i < allexploreposts.length; i++)
+          individualpost(context, ref, allexploreposts[i])
       ],
     );
   }
@@ -237,8 +261,10 @@ class ViewChangeNotifier extends ChangeNotifier {
     updateAllPostsList();
   }
 
-  Widget individualpost(BuildContext context, TextPost textPost) {
+  Widget individualpost(
+      BuildContext context, WidgetRef ref, TextPost textPost) {
     double screenwidth = MediaQuery.sizeOf(context).width;
+    final userNotifierState = ref.watch(userChangeNotifier);
     return Container(
       width: screenwidth * 0.934,
       margin: EdgeInsets.only(
@@ -256,6 +282,7 @@ class ViewChangeNotifier extends ChangeNotifier {
           borderRadius: BorderRadius.all(Radius.circular(12))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -313,12 +340,24 @@ class ViewChangeNotifier extends ChangeNotifier {
                   ),
                 ],
               ),
-              GestureDetector(onTap: (){
-                deleteDatafromDatabase(textPost);
-              },
-                  child: Icon(FeatherIcons.delete,
-                  color: Colors.redAccent,
-                      size: 18,))
+              userNotifierState.retrieveduserdata.isNotEmpty
+                  ? textPost.username ==
+                          userNotifierState.retrieveduserdata[0].username
+                      ? GestureDetector(
+                          onTap: () {
+                            deleteDatafromDatabase(textPost);
+                          },
+                          child: Icon(
+                            FeatherIcons.delete,
+                            color: Colors.redAccent,
+                            size: 18,
+                          ))
+                      : SizedBox(
+                          height: 0,
+                        )
+                  : SizedBox(
+                      height: 0,
+                    )
             ],
           ),
           Container(
@@ -417,7 +456,7 @@ class ViewChangeNotifier extends ChangeNotifier {
                 ),
                 InkWell(
                   onTap: () {
-                    shareTextPost(textPost.postText);
+                    shareTextPost(context, textPost.postText, screenwidth);
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -461,17 +500,17 @@ class ViewChangeNotifier extends ChangeNotifier {
 
   Widget newpost(BuildContext context, WidgetRef ref) {
     double screenwidth = MediaQuery.sizeOf(context).width;
-    final userChangeNotifierState= ref.watch(userChangeNotifier);
-    String name=userChangeNotifierState.retrieveduserdata.isNotEmpty?
-    userChangeNotifierState.retrieveduserdata[0].name:
-    "Julian";
-    String username=userChangeNotifierState.retrieveduserdata.isNotEmpty?
-    userChangeNotifierState.retrieveduserdata[0].username:
-    "julian4528";
-    int avatarindex=userChangeNotifierState.retrieveduserdata.isNotEmpty?
-   userChangeNotifierState.retrieveduserdata[0].avatarIndex:
-    0;
-    String currentdateTime=DateFormat.yMd().add_jm().format(DateTime.now());
+    final userChangeNotifierState = ref.watch(userChangeNotifier);
+    String name = userChangeNotifierState.retrieveduserdata.isNotEmpty
+        ? userChangeNotifierState.retrieveduserdata[0].name
+        : "Julian";
+    String username = userChangeNotifierState.retrieveduserdata.isNotEmpty
+        ? userChangeNotifierState.retrieveduserdata[0].username
+        : "julian4528";
+    int avatarindex = userChangeNotifierState.retrieveduserdata.isNotEmpty
+        ? userChangeNotifierState.retrieveduserdata[0].avatarIndex
+        : 0;
+    String currentdateTime = DateFormat.yMd().add_jm().format(DateTime.now());
     return Container(
       width: screenwidth * 0.934,
       margin: EdgeInsets.only(bottom: screenwidth * 0.0432),
@@ -499,17 +538,12 @@ class ViewChangeNotifier extends ChangeNotifier {
                     width: screenwidth * 0.101,
                     //  height: screenwidth*0.153,
                     //  width: screenwidth*0.153,
-                    child:
-
-                    Image.asset(
-                      getavatarfromInt(avatarindex)),
-                    ),
-
+                    child: Image.asset(getavatarfromInt(avatarindex)),
+                  ),
                   Container(
                     margin: EdgeInsets.only(left: screenwidth * 0.02),
                     child: Text(
-                    name,
-
+                      name,
                       style: TextStyle(
                         fontFamily: intersemibold,
                         color: appdarkgrey1,
@@ -610,8 +644,7 @@ class ViewChangeNotifier extends ChangeNotifier {
                         commentCount: 0,
                         likeCount: 0,
                         shareCount: 0,
-                        datetime:
-                           currentdateTime,
+                        datetime: currentdateTime,
                         postText: newposttextController.text);
                     oncreatePostTapped(context, textPost);
                   },
@@ -652,8 +685,7 @@ class ViewChangeNotifier extends ChangeNotifier {
                         commentCount: 0,
                         likeCount: 0,
                         shareCount: 0,
-                        datetime:
-                            currentdateTime,
+                        datetime: currentdateTime,
                         postText: newposttextController.text);
                     print("gere");
                     addnewPost(textPost);
@@ -709,9 +741,11 @@ class ViewChangeNotifier extends ChangeNotifier {
     print("here");
     updateAllPostsList();
   }
+
   String getTimeAgo(String dateString) {
     final now = DateTime.now();
-    final date = DateFormat('MM/dd/yyyy h:mm a').parse(dateString); // Parse the date string
+    final date = DateFormat('MM/dd/yyyy h:mm a')
+        .parse(dateString); // Parse the date string
 
     final difference = now.difference(date);
 
@@ -748,8 +782,51 @@ class ViewChangeNotifier extends ChangeNotifier {
     }
   }
 
-  void shareTextPost(String text) {
-    FlutterShare.share(title: "New post via Connect Me", text: text);
+  void shareTextPost(BuildContext context, String text, double screenwidth) {
+    //  FlutterShare.share(title: "New post via Connect Me", text: text);
+    try {
+      FlutterShare.share(title: "New post via Connect Me", text: text);
+    } catch (e) {
+      // Show an error dialog
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Sharing Failed',
+              style: TextStyle(
+                fontFamily: intermedium,
+                color: Colors.white,
+                fontSize: screenwidth * 0.0507,
+              ),
+            ),
+            content: Text(
+              'An error occurred while sharing: $e',
+              style: TextStyle(
+                fontFamily: interregular,
+                color: Colors.white,
+                fontSize: screenwidth * 0.0387,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    fontFamily: interregular,
+                    color: Colors.white,
+                    fontSize: screenwidth * 0.0387,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   void focusOnNewPostTextField(BuildContext context) {
@@ -765,11 +842,10 @@ class ViewChangeNotifier extends ChangeNotifier {
     updateAllPostsList();
   }
 
-  Widget alladdedDBPosts(BuildContext context, List<TextPost> allposts) {
-    double screenwidth = MediaQuery.sizeOf(context).width;
+  Widget alladdedDBPosts(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
-        allposts.isEmpty
+        retrievedtextposts.isEmpty
             ? SizedBox(
                 height: 0,
               )
@@ -779,7 +855,8 @@ class ViewChangeNotifier extends ChangeNotifier {
                 scrollDirection: Axis.vertical,
                 itemCount: retrievedtextposts.length,
                 itemBuilder: (context, index) {
-                  return individualpost(context, retrievedtextposts[index]);
+                  return individualpost(
+                      context, ref, retrievedtextposts[index]);
                 })
         // for(int i=0;i<allposts.length;i++)individualpost(context, allposts[i])
       ],

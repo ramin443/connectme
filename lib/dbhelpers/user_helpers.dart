@@ -18,19 +18,19 @@ class UserDatabaseHelper {
       version: 1,
     );
   }
+
   Future<void> insertUser(User user) async {
     print("Inserting here");
     await _database.insert(
       'users',
-        user.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
+      user.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-
   Future<List<User>> getAllUsers() async {
-    final List<Map<String, dynamic>> userMaps = await _database.query('users',
-    orderBy: "id DESC");
+    final List<Map<String, dynamic>> userMaps =
+        await _database.query('users', orderBy: "id DESC");
     return List.generate(userMaps.length, (i) {
       return User(
         name: userMaps[i]['name'] as String,
@@ -41,26 +41,7 @@ class UserDatabaseHelper {
     });
   }
 
-  /*Future<int> updateUser(User user) async {
-    return await _database.update(
-      'users',
-      user.toJson(),
-      where: 'id = ?',
-      whereArgs: [user.id],
-    );
-  }
-
-  Future<void> deleteUser(int id) async {
-    await _database.delete(
-      'users',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }*/
-
   Future<void> close() async {
     await _database.close();
   }
 }
-
-

@@ -18,23 +18,17 @@ class _SplashScreenState extends State<SplashScreen> {
   startTime() async {
     return new Timer(_duration, navigationPage);
   }
+
   void navigationPage() {
-    bool loggedin=false;
-    var user="";
-    if(user==null){
-      print("User not logged in");
-      loggedin=false;
-    }else{
-      print("User  logged in");
-      loggedin=true;
-    }
     Navigator.of(context).pushReplacementNamed(userinforoute);
   }
+
   @override
   void initState() {
     super.initState();
     startTime();
   }
+
   @override
   Widget build(BuildContext context) {
     double screenwidth = MediaQuery.sizeOf(context).width;
@@ -47,17 +41,19 @@ class _SplashScreenState extends State<SplashScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.only(bottom: screenwidth*0.08),
-              child: Text("Connect Me",
+              margin: EdgeInsets.only(bottom: screenwidth * 0.08),
+              child: Text(
+                "Connect Me",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: screenwidth*0.0814,
+                    fontSize: screenwidth * 0.0814,
                     color: Colors.white,
-                    fontFamily: tiemposfineregular
-                ),),
+                    fontFamily: tiemposfineregular),
+              ),
             )
           ],
         ),
       ),
-    );  }
+    );
+  }
 }

@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
-
 import '../datamodels/textPost_Model.dart';
+
 class DatabaseHelper {
   late Database _database;
 
@@ -50,19 +49,23 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-  void deleteData(TextPost textPost)async{
+
+  void deleteData(TextPost textPost) async {
     await _database.delete(
       'text_posts',
       where: 'postText = ? AND datetime = ?', // Replace with your column names
-      whereArgs: [textPost.postText, textPost.datetime], // Replace with your values
+      whereArgs: [
+        textPost.postText,
+        textPost.datetime
+      ], // Replace with your values
     );
-
   }
+
   Future<List<TextPost>> getAllTextPosts() async {
     await initDatabase();
-    final List<Map<String, dynamic>> postMaps = await _database.query('text_posts',
+    final List<Map<String, dynamic>> postMaps = await _database.query(
+      'text_posts',
       orderBy: 'datetime DESC',
-
     );
     return List.generate(postMaps.length, (index) {
       return TextPost.fromJson(postMaps[index]);
@@ -70,5 +73,4 @@ class DatabaseHelper {
   }
 
 //sdsd
-
 }

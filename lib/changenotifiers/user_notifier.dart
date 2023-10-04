@@ -1,11 +1,9 @@
 import 'dart:math';
-
 import 'package:connectme/datamodels/user_model.dart';
 import 'package:connectme/providers/all_providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../constants/color_constants.dart';
 import '../constants/font_constants.dart';
 import '../constants/image_constants.dart';
@@ -15,33 +13,38 @@ import '../dbhelpers/user_helpers.dart';
 class UserChangeNotifier extends ChangeNotifier {
   TextEditingController fullnametextController = TextEditingController();
   TextEditingController userbiotextController = TextEditingController();
-  int selectedavatarindex=0;
+  int selectedavatarindex = 0;
   List<User> retrieveduserdata = [];
 
-  void updateavatarIndex(int index){
-    selectedavatarindex=index;
+  void updateavatarIndex(int index) {
+    selectedavatarindex = index;
     notifyListeners();
   }
-  int fourRandomDigits(){
+
+  int fourRandomDigits() {
     final random = Random();
 
     // Generate a random integer with 4 digits (between 1000 and 9999)
     int random4DigitNumber = 1000 + random.nextInt(9000);
     return random4DigitNumber;
   }
-  void insertusertoDatabase(BuildContext context)async{
-    String fullname=fullnametextController.text;
-    String bio=userbiotextController.text;
-    String username="${fullname.toLowerCase()}${fourRandomDigits()}";
-    User user=User(name: fullname,
+
+  void insertusertoDatabase(BuildContext context) async {
+    String fullname = fullnametextController.text;
+    String bio = userbiotextController.text;
+    String username = "${fullname.toLowerCase()}${fourRandomDigits()}";
+    User user = User(
+        name: fullname,
         bio: bio,
-        avatarIndex: selectedavatarindex, username: username);
+        avatarIndex: selectedavatarindex,
+        username: username);
     final dbHelper = UserDatabaseHelper();
     await dbHelper.initDatabase();
     await dbHelper.insertUser(user);
     updateAllUsersList();
     navigtatetonextpage(context);
   }
+
   void updateAllUsersList() async {
     final dbHelper = UserDatabaseHelper();
     await dbHelper.initDatabase();
@@ -49,17 +52,18 @@ class UserChangeNotifier extends ChangeNotifier {
     // print(retrievedtextposts);
     notifyListeners();
   }
-  void navigtatetonextpage(BuildContext context){
+
+  void navigtatetonextpage(BuildContext context) {
     Navigator.pushNamedAndRemoveUntil(context, baseroute, (route) => false);
-}
-  
-  Widget floatingDoneButton(BuildContext context,WidgetRef ref){
-    double screenwidth = MediaQuery.sizeOf(context!).width;
-    final userNotifierState= ref.watch(userChangeNotifier);
-    final viewNotifierState= ref.watch(viewChangeNotifier);
+  }
+
+  Widget floatingDoneButton(BuildContext context, WidgetRef ref) {
+    double screenwidth = MediaQuery.sizeOf(context).width;
+    final userNotifierState = ref.watch(userChangeNotifier);
+    final viewNotifierState = ref.watch(viewChangeNotifier);
     return GestureDetector(
       onTap: () {
-        if(fullnametextController.text.isNotEmpty){
+        if (fullnametextController.text.isNotEmpty) {
           insertusertoDatabase(context);
           viewNotifierState.updateAllPostsList();
           userNotifierState.updateAllUsersList();
@@ -72,9 +76,9 @@ class UserChangeNotifier extends ChangeNotifier {
         width: screenwidth * 0.785,
         height: screenwidth * 0.131,
         decoration: BoxDecoration(
-          color:
-              fullnametextController.text.isEmpty?
-              appmainskyblue.withOpacity(0.55):appmainskyblue,
+          color: fullnametextController.text.isEmpty
+              ? appmainskyblue.withOpacity(0.55)
+              : appmainskyblue,
           borderRadius: BorderRadius.all(Radius.circular(22)),
         ),
         child: Row(
@@ -108,8 +112,9 @@ class UserChangeNotifier extends ChangeNotifier {
       ),
     );
   }
+
   Widget enterdetailspart(BuildContext context) {
-    double screenwidth = MediaQuery.sizeOf(context!).width;
+    double screenwidth = MediaQuery.sizeOf(context).width;
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -126,21 +131,21 @@ class UserChangeNotifier extends ChangeNotifier {
                       fontSize: screenwidth * 0.064,
                     ),
                     children: [
-                      TextSpan(text: "Please enter your"),
-                      TextSpan(
-                        text: " first name",
-                        style: TextStyle(
-                          fontFamily: tiemposfineregular,
-                          color: appmainskyblue,
-                          fontSize: screenwidth * 0.064,
-                        ),
-                      ),
-                    ])),
+                  TextSpan(text: "Please enter your"),
+                  TextSpan(
+                    text: " first name",
+                    style: TextStyle(
+                      fontFamily: tiemposfineregular,
+                      color: appmainskyblue,
+                      fontSize: screenwidth * 0.064,
+                    ),
+                  ),
+                ])),
           ),
           Container(
             width: screenwidth * 0.9,
             child: TextFormField(
-              onChanged: (v){
+              onChanged: (v) {
                 notifyListeners();
               },
               style: TextStyle(
@@ -176,15 +181,15 @@ class UserChangeNotifier extends ChangeNotifier {
                       fontSize: screenwidth * 0.064,
                     ),
                     children: [
-                      TextSpan(
-                        text: "Bio",
-                        style: TextStyle(
-                          fontFamily: tiemposfineregular,
-                          color: appmainskyblue,
-                          fontSize: screenwidth * 0.064,
-                        ),
-                      ),
-                    ])),
+                  TextSpan(
+                    text: "Bio",
+                    style: TextStyle(
+                      fontFamily: tiemposfineregular,
+                      color: appmainskyblue,
+                      fontSize: screenwidth * 0.064,
+                    ),
+                  ),
+                ])),
           ),
           Container(
             width: screenwidth * 0.9,
@@ -199,10 +204,12 @@ class UserChangeNotifier extends ChangeNotifier {
               keyboardType: TextInputType.name,
               controller: userbiotextController,
               textInputAction: TextInputAction.done,
+              textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
                 border: InputBorder.none,
 //                      contentPadding: EdgeInsets.only(top: 17),
-                hintText: "Please enter your interests, hobbies, and likes here "
+                hintText:
+                    "Please enter your interests, hobbies, and likes here "
                     "so others can know more about you.",
                 hintStyle: TextStyle(
                     height: 1.2,
@@ -223,38 +230,39 @@ class UserChangeNotifier extends ChangeNotifier {
                       fontSize: screenwidth * 0.064,
                     ),
                     children: [
-                      TextSpan(
-                        text: "Select an",
-                        style: TextStyle(
-                          fontFamily: tiemposfineregularitalic,
-                          color: appdarkgrey1,
-                          fontSize: screenwidth * 0.064,
-                        ),
-                      ),
-                      TextSpan(
-                        text: " avatar ",
-                        style: TextStyle(
-                          fontFamily: tiemposfineregularitalic,
-                          color: appmainskyblue,
-                          fontSize: screenwidth * 0.064,
-                        ),
-                      ),
-                      TextSpan(
-                        text: "of your choice",
-                        style: TextStyle(
-                          fontFamily: tiemposfineregularitalic,
-                          color: appdarkgrey1,
-                          fontSize: screenwidth * 0.064,
-                        ),
-                      ),
-                    ])),
+                  TextSpan(
+                    text: "Select an",
+                    style: TextStyle(
+                      fontFamily: tiemposfineregularitalic,
+                      color: appdarkgrey1,
+                      fontSize: screenwidth * 0.064,
+                    ),
+                  ),
+                  TextSpan(
+                    text: " avatar ",
+                    style: TextStyle(
+                      fontFamily: tiemposfineregularitalic,
+                      color: appmainskyblue,
+                      fontSize: screenwidth * 0.064,
+                    ),
+                  ),
+                  TextSpan(
+                    text: "of your choice",
+                    style: TextStyle(
+                      fontFamily: tiemposfineregularitalic,
+                      color: appdarkgrey1,
+                      fontSize: screenwidth * 0.064,
+                    ),
+                  ),
+                ])),
           ),
         ],
       ),
     );
   }
-  String getAvatarfromIndex(int index){
-    switch (index){
+
+  String getAvatarfromIndex(int index) {
+    switch (index) {
       case 0:
         return appavatar0;
       case 1:
@@ -275,15 +283,16 @@ class UserChangeNotifier extends ChangeNotifier {
         return appavatar0;
     }
   }
-  ScrollController scrollController=ScrollController();
+
+  ScrollController scrollController = ScrollController();
+
   Widget selectavatar(BuildContext context) {
-    double screenwidth = MediaQuery.sizeOf(context!).width;
+    double screenwidth = MediaQuery.sizeOf(context).width;
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Stack(
             children: [
               Container(
@@ -300,35 +309,35 @@ class UserChangeNotifier extends ChangeNotifier {
                       itemCount: connectmeappavatars.length,
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
-                          onTap: (){
-                          },
+                          onTap: () {},
                           child: Container(
-
-                              margin: EdgeInsets.only(
-
-                                  left: screenwidth * 0.03),
+                              margin: EdgeInsets.only(left: screenwidth * 0.03),
                               child: Stack(
                                 alignment: AlignmentDirectional.topEnd,
                                 children: [
                                   GestureDetector(
-                                    onTap:(){
+                                    onTap: () {
                                       print("Avatar index here is: $index");
                                       updateavatarIndex(index);
                                       //   setselectedavatarindex(index);
                                     },
                                     child: ClipOval(
-                                      child: Image.asset(connectmeappavatars[index],
+                                      child: Image.asset(
+                                          connectmeappavatars[index],
                                           width: screenwidth * 0.298,
                                           fit: BoxFit.cover),
                                     ),
                                   ),
-                                  selectedavatarindex != index?
-                                  SizedBox(height: 0,):
-                                  Icon(
-                                    CupertinoIcons.checkmark_alt_circle_fill,
-                                    color: appmainskyblue,
-                                    size: screenwidth * 0.0693,
-                                  )
+                                  selectedavatarindex != index
+                                      ? SizedBox(
+                                          height: 0,
+                                        )
+                                      : Icon(
+                                          CupertinoIcons
+                                              .checkmark_alt_circle_fill,
+                                          color: appmainskyblue,
+                                          size: screenwidth * 0.0693,
+                                        )
                                 ],
                               )),
                         );
@@ -350,19 +359,22 @@ class UserChangeNotifier extends ChangeNotifier {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      IconButton(onPressed: (){
-                        scrollController.animateTo(
-                          scrollController.position.maxScrollExtent,
-                          duration: Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                        );
-                      }, icon: Icon(
-                        CupertinoIcons.chevron_forward,
-                        color: Colors.black45,
-                        size: 24,
-                      )),
-                      SizedBox(height: 30,)
-
+                      IconButton(
+                          onPressed: () {
+                            scrollController.animateTo(
+                              scrollController.position.maxScrollExtent,
+                              duration: Duration(milliseconds: 250),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          icon: Icon(
+                            CupertinoIcons.chevron_forward,
+                            color: Colors.black45,
+                            size: 24,
+                          )),
+                      SizedBox(
+                        height: 30,
+                      )
                     ],
                   ),
                 ),
@@ -376,19 +388,22 @@ class UserChangeNotifier extends ChangeNotifier {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      IconButton(onPressed: (){
-                        scrollController.animateTo(
-                          scrollController.position.minScrollExtent,
-                          duration: Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                        );
-                      }, icon: Icon(
-                        CupertinoIcons.chevron_back,
-                        color: Colors.black45,
-                        size: 24,
-                      )),
-                      SizedBox(height: 20,)
-
+                      IconButton(
+                          onPressed: () {
+                            scrollController.animateTo(
+                              scrollController.position.minScrollExtent,
+                              duration: Duration(milliseconds: 250),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          icon: Icon(
+                            CupertinoIcons.chevron_back,
+                            color: Colors.black45,
+                            size: 24,
+                          )),
+                      SizedBox(
+                        height: 20,
+                      )
                     ],
                   ),
                 ),
